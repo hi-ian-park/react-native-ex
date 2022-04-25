@@ -9,9 +9,21 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
+import { Fontisto } from "@expo/vector-icons";
 
 const API_URL = "https://api.openweathermap.org/data/2.5/onecall";
 const API_KEY = "878b0b789d919b4bf55b0d07df865f88";
+
+const icons = {
+  Clear: "day-sunny",
+  Clouds: "cloudy",
+  Rain: "rain",
+  Atmosphere: "cloudy-gusts",
+  Snow: "snow",
+  Drizzle: "day-rain",
+  Thunderstorm: "lightning",
+};
+
 const { width: SCROLL_WIDTH } = Dimensions.get("window");
 
 function App() {
@@ -49,30 +61,49 @@ function App() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.city}>
-        <Text style={styles.cityName}>{city}</Text>
-      </View>
-      <ScrollView
-        pagingEnabled
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.weather}
-      >
-        {isLoading ? (
-          <View style={styles.day}>
-            <ActivityIndicator color="white" size="large" />
+      {ok ? (
+        <>
+          <View style={styles.city}>
+            <Text style={styles.cityName}>{city}</Text>
           </View>
-        ) : (
-          days.map((day, index) => (
-            <View key={index} style={styles.day}>
-              <Text style={styles.temp}>
-                {parseFloat(day.temp.day).toFixed(1)}
-              </Text>
-              <Text style={styles.desc}>{day.weather[0].main}</Text>
-            </View>
-          ))
-        )}
-      </ScrollView>
+          <ScrollView
+            pagingEnabled
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.weather}
+          >
+            {isLoading ? (
+              <View style={styles.day}>
+                <ActivityIndicator color="white" size="large" />
+              </View>
+            ) : (
+              days.map((day, index) => (
+                <View key={index} style={styles.day}>
+                  <Text style={styles.temp}>
+                    {parseFloat(day.temp.day).toFixed(1)}
+                  </Text>
+                  <View style={styles.weatherInfo}>
+                    <Fontisto
+                      name={icons[day.weather[0].main]}
+                      size={50}
+                      color="#eee"
+                      style={{ marginRight: 15 }}
+                    />
+                    <Text style={styles.main}>{day.weather[0].main}</Text>
+                  </View>
+
+                  <Text style={styles.desc}>{day.weather[0].description}</Text>
+                </View>
+              ))
+            )}
+          </ScrollView>
+        </>
+      ) : (
+        <View>
+          <Text>No..</Text>
+        </View>
+      )}
+
       <StatusBar style="light" />
     </View>
   );
@@ -91,6 +122,7 @@ const styles = StyleSheet.create({
   },
 
   cityName: {
+    color: "#eee",
     fontSize: 58,
     fontWeight: "600",
   },
@@ -100,14 +132,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  weatherInfo: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 30,
+  },
+
   temp: {
     marginTop: 50,
+    color: "#eee",
     fontSize: 128,
     fontWeight: "600",
   },
 
-  desc: {
+  main: {
     fontSize: 60,
+    color: "#eee",
+  },
+  desc: {
+    fontSize: 32,
+    color: "#eee",
   },
 });
 
